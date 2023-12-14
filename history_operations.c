@@ -34,48 +34,28 @@ char *get_history_file(info_t *info)
  */
 int write_history(info_t *info)
 {
+	ssize_t fd;
 	char *filename = get_history_file(info);
 	list_t *node = NULL;
 
-	int fd = open_history_file(filename);
+	if (!filename)
+		return (-1);
+
+	fd = open(filename, O_CREAT | O_TRUNC | O_RDWR, 0644);
 	free(filename);
 
 	if (fd == -1)
 		return (-1);
 
-	write_history_to_file(info, fd);
-	close(fd);
-
-	return (1);
-}
-
-/**
- * open_history_file - opens the history file
- * @filename: the name of the history file
- *
- * Return: file descriptor on success, else -1
- */
-int open_history_file(char *filename)
-{
-	return open(filename, O_CREAT | O_TRUNC | O_RDWR, 0644);
-}
-
-/**
- * write_history_to_file - writes history to the given file descriptor
- * @info: the parameter struct
- * @fd: file descriptor
- */
-void write_history_to_file(info_t *info, int fd)
-{
-	list_t *node = info->history;
-
-	for (; node; node = node->next)
+	for (node = info->history; node; node = node->next)
 	{
 		_putsfd(node->str, fd);
 		_putfd('\n', fd);
 	}
 
 	_putfd(BUF_FLUSH, fd);
+	close(fd);
+	return (1);
 }
 
 /**
@@ -86,99 +66,57 @@ void write_history_to_file(info_t *info, int fd)
  */
 int read_history(info_t *info)
 {
-	char *filename = get_history_file(info);
-	int linecount = 0;
-	ssize_t fsize = 0;
-	char *buf = read_history_file(filename, &fsize);
+	int i, last = 0, linecount = 0;
+	ssize_t fd, rdlen, fsize = 0;
+	struct stat st;
+	char *buf = NULL, *filename = get_history_file(info);
 
+	if (!filename)
+		return (0);
+
+	fd = open(filename, O_RDONLY);
+	free(filename);
+
+	if (fd == -1)
+		return (0);
+
+	if (!fstat(fd, &st))
+		fsize = st.st_size;
+
+	if (fsize < 2)
+		return (0);
+
+	buf = malloc(sizeof(char) * (fsize + 1));
 	if (!buf)
 		return (0);
 
-	process_history_buffer(info, buf, fsize, &linecount);
-	free(buf);
-
-	cleanup_history(info);
-
-	return (info->histcount);
-}
-
-/**
- * read_history_file - reads the contents of the history file
- * @filename: the name of the history file
- * @fsize: pointer to store the size of the file
- *
- * Return: buffer containing file content, or NULL on failure
- */
-char *read_history_file(char *filename, ssize_t *fsize)
-{
-	int fd;
-	struct stat st;
-	char *buf;
-
-	fd = open(filename, O_RDONLY);
-
-	if (fd == -1)
-		return (NULL);
-
-	if (fstat(fd, &st))
-		return (NULL);
-
-	*fsize = st.st_size;
-
-	if (*fsize < 2)
-		return (NULL);
-
-	buf = malloc(sizeof(char) * (*fsize + 1));
-
-	if (!buf)
-		return (NULL);
-
-	ssize_t rdlen = read(fd, buf, *fsize);
-	buf[*fsize] = 0;
+	rdlen = read(fd, buf, fsize);
+	buf[fsize] = 0;
 
 	if (rdlen <= 0)
-		return (free(buf), NULL);
+		return (free(buf), 0);
 
 	close(fd);
 
-	return (buf);
-}
-
-/**
- * process_history_buffer - processes the history buffer
- * @info: the parameter struct
- * @buf: buffer containing file content
- * @fsize: size of the buffer
- * @linecount: pointer to store the line count
- */
-void process_history_buffer(info_t *info, char *buf, ssize_t fsize, int *linecount)
-{
-	int i, last = 0;
-
 	for (i = 0; i < fsize; i++)
-	{
 		if (buf[i] == '\n')
 		{
 			buf[i] = 0;
-			build_history_list(info, buf + last, (*linecount)++);
+			build_history_list(info, buf + last, linecount++);
 			last = i + 1;
 		}
-	}
 
 	if (last != i)
-		build_history_list(info, buf + last, (*linecount)++);
-}
+		build_history_list(info, buf + last, linecount++);
 
-/**
- * cleanup_history - cleans up history by removing excess entries
- * @info: the parameter struct
- */
-void cleanup_history(info_t *info)
-{
+	free(buf);
+	info->histcount = linecount;
+
 	while (info->histcount-- >= HIST_MAX)
 		delete_node_at_index(&(info->history), 0);
 
 	renumber_history(info);
+	return (info->histcount);
 }
 
 /**
@@ -223,4 +161,3 @@ int renumber_history(info_t *info)
 
 	return (info->histcount = i);
 }
-

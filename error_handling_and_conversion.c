@@ -96,6 +96,7 @@ int print_d(int input, int fd)
 char *convert_number(long int num, int base, int flags)
 {
 	static char *array;
+	char buffer[BUFFER_SIZE];
 	static const int BUFFER_SIZE = 50;
 	char sign = 0;
 	char *ptr;
@@ -107,7 +108,7 @@ char *convert_number(long int num, int base, int flags)
 		sign = '-';
 	}
 	array = flags & CONVERT_LOWERCASE ? "0123456789abcdef" : "0123456789ABCDEF";
-	ptr = &buffer[BUFFER_SIZE - 1];
+	char *ptr = &buffer[BUFFER_SIZE - 1];
 	*ptr = '\0';
 	do {
 		*--ptr = array[n % base];

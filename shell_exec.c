@@ -1,3 +1,4 @@
+#include "shell.h"
 /**
  * execute_shell - main shell loop
  * @info: the parameter & return info struct
@@ -5,7 +6,7 @@
  *
  * Return: 0 on success, 1 on error, or error code
  */
-void execute_shell(info_t *info, char **av)
+int execute_shell(info_t *info, char **av)
 {
 	ssize_t r = 0;
 	int builtin_ret = 0;

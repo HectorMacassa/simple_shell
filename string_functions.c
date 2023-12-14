@@ -1,3 +1,4 @@
+#include "shell.h"
 /**
  * _strncpy - copies up to 'n' characters from the source to the destination
  * @dest: destination string
