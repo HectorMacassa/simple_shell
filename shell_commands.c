@@ -12,7 +12,7 @@ int _myexit(info_t *info)
 {
 	int exitcheck;
 
-	if (info->argv[1])	/* If there is an exit argument */
+	if (info->argv[1])
 	{
 		exitcheck = _erratoi(info->argv[1]);
 		if (exitcheck == -1)
