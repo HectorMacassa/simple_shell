@@ -1,62 +1,69 @@
 #include "shell.h"
+
 /**
- * _strncpy - copies up to 'n' characters from the source to the destination
- * @dest: destination string
- * @src: source string
- * @n: maximum number of characters to copy
- * Return: a pointer to the destination string
+ * _strncpy - copies a string
+ * @dest: the destination string to be copied to
+ * @src: the source string
+ * @n: the amount of characters to be copied
+ * Return: the concatenated string
  */
 char *_strncpy(char *dest, const char *src, size_t n)
 {
-	size_t i;
+	size_t i, j;
+	char *s = dest;
 
-	for (i = 0; i < n - 1 && src[i] != '\0'; ++i)
+	for (i = 0; i < n - 1 && src[i] != '\0'; i++)
+	{
+		dest[i] = src[i];
+	}
+
+	for (j = i; j < n; j++)
+	{
+		dest[j] = '\0';
+	}
+
+	return (s);
+}
+
+/**
+ * _strncat - concatenates two strings
+ * @dest: the first string
+ * @src: the second string
+ * @n: the amount of bytes to be maximally used
+ * Return: the concatenated string
+ */
+char *_strncat(char *dest, const char *src, size_t n)
+{
+	size_t i;
+	char *s = dest;
+
+	while (*dest != '\0')
+	{
+		dest++;
+	}
+
+	for (i = 0; i < n && src[i] != '\0'; i++)
 	{
 		dest[i] = src[i];
 	}
 
 	dest[i] = '\0';
-	return (dest);
-}
 
-/**
- * _strncat - concatenates up to 'n' characters from the source
- * to the destination
- * @dest: destination string
- * @src: source string
- * @n: maximum number of characters to concatenate
- * Return: a pointer to the destination string
- */
-char *_strncat(char *dest, const char *src, size_t n)
-{
-	size_t i, j;
-
-	for (i = 0; dest[i] != '\0'; ++i)
-		for (j = 0; j < n && src[j] != '\0'; ++j, ++i)
-		{
-			dest[i] = src[j];
-		}
-
-	dest[i] = '\0';
-	return (dest);
+	return (s);
 }
 
 /**
  * _strchr - locates a character in a string
  * @s: the string to be parsed
  * @c: the character to look for
- * Return: a pointer to the first occurrence of 'c' in 's',
- * or NULL if not found
+ * Return: (s) a pointer to the memory area s
  */
 char *_strchr(char *s, char c)
 {
-	while (*s != '\0')
-	{
+	do {
 		if (*s == c)
-		{
 			return (s);
-		}
-		++s;
-	}
+	} while (*s++ != '\0');
+
 	return (NULL);
 }

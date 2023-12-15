@@ -30,6 +30,7 @@ char *_strcpy(char *dest, char *src)
  */
 char *_strdup(const char *str)
 {
+	int i;
 	int length = 0;
 	char *ret;
 
@@ -43,7 +44,7 @@ char *_strdup(const char *str)
 	if (!ret)
 		return (NULL);
 
-	for (int i = 0; i <= length; i++)
+	for (i = 0; i <= length; i++)
 		ret[i] = str[i];
 
 	return (ret);

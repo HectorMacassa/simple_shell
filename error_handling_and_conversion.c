@@ -12,7 +12,7 @@ int _erratoi(char *s)
 	unsigned long int result = 0;
 
 	if (*s == '+')
-		s++;
+		s++; /* TODO: why does this make main return 255? */
 	for (i = 0; s[i] != '\0'; i++)
 	{
 		if (s[i] >= '0' && s[i] <= '9')
@@ -96,8 +96,7 @@ int print_d(int input, int fd)
 char *convert_number(long int num, int base, int flags)
 {
 	static char *array;
-	char buffer[BUFFER_SIZE];
-	static const int BUFFER_SIZE = 50;
+	static char buffer[50];
 	char sign = 0;
 	char *ptr;
 	unsigned long n = num;
@@ -108,8 +107,9 @@ char *convert_number(long int num, int base, int flags)
 		sign = '-';
 	}
 	array = flags & CONVERT_LOWERCASE ? "0123456789abcdef" : "0123456789ABCDEF";
-	char *ptr = &buffer[BUFFER_SIZE - 1];
+	ptr = &buffer[49];
 	*ptr = '\0';
+
 	do {
 		*--ptr = array[n % base];
 		n /= base;
@@ -137,3 +137,4 @@ void remove_comments(char *buf)
 			break;
 		}
 }
+

@@ -1,32 +1,31 @@
 #include "shell.h"
 
 /**
- * _string_length - returns the length of a string
+ * _strlen - returns the length of a string
  * @s: the string whose length to check
  *
- * Return: integer length of the string
+ * Return: integer length of string
  */
-int _string_length(const char *s)
+int _strlen(char *s)
 {
-	int length = 0;
+	int i = 0;
 
 	if (!s)
 		return (0);
 
 	while (*s++)
-		length++;
-
-	return (length);
+		i++;
+	return (i);
 }
 
 /**
- * _string_compare - performs lexicographic comparison of two strings.
+ * _strcmp - performs lexicographic comparison of two strings.
  * @s1: the first string
  * @s2: the second string
  *
  * Return: negative if s1 < s2, positive if s1 > s2, zero if s1 == s2
  */
-int _string_compare(const char *s1, const char *s2)
+int _strcmp(char *s1, char *s2)
 {
 	while (*s1 && *s2)
 	{
@@ -35,8 +34,10 @@ int _string_compare(const char *s1, const char *s2)
 		s1++;
 		s2++;
 	}
-
-	return (*s1 - *s2);
+	if (*s1 == *s2)
+		return (0);
+	else
+		return (*s1 < *s2 ? -1 : 1);
 }
 
 /**
@@ -44,36 +45,31 @@ int _string_compare(const char *s1, const char *s2)
  * @haystack: string to search
  * @needle: the substring to find
  *
- * Return: pointer to the next character of haystack or NULL
+ * Return: address of the next char of haystack or NULL
  */
-const char *starts_with(const char *haystack, const char *needle)
+char *starts_with(const char *haystack, const char *needle)
 {
 	while (*needle)
 		if (*needle++ != *haystack++)
-			return (haystack);
-
-	return (haystack);
+			return (NULL);
+	return ((char *)haystack);
 }
 
 /**
- * _string_concatenate - concatenates two strings
- * @destination: the destination buffer
- * @source: the source buffer
+ * _strcat - concatenates two strings
+ * @dest: the destination buffer
+ * @src: the source buffer
  *
  * Return: pointer to the destination buffer
  */
-char *_string_concatenate(char *destination, const char *source)
+char *_strcat(char *dest, char *src)
 {
-	char *result = destination;
+	char *ret = dest;
 
-	while (*destination)
-		destination++;
-
-	while (*source)
-		*destination++ = *source++;
-
-	*destination = *source;
-
-	return (result);
+	while (*dest)
+		dest++;
+	while (*src)
+		*dest++ = *src++;
+	*dest = *src;
+	return (ret);
 }
-
